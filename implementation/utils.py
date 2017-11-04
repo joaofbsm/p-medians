@@ -8,6 +8,26 @@ __license__ = "GPL"
 __version__ = "3.0"
 
 import math
+from node import Node
+
+
+def read_data(file_path, initial_pheromone):
+    nodes = []
+
+    with open(file_path, 'r') as f:
+        n, p = tuple(map(int, f.readline().split()))
+
+        for line in f:
+            line = line.split()
+            x = int(line[0])
+            y = int(line[1])
+            capacity = int(line[2])
+            demand = int(line[3])
+            node = Node(x, y, capacity, demand, initial_pheromone)
+            nodes.append(node)
+
+    return n, p, nodes
+
 
 def euclidean_distance(a, b):
     """2D euclidian distance calculation

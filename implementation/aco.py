@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-"""ACO with heuristics as a solution to the capacitated p-medians problem"""
+"""ACO methods"""
 
 __author__ = "João Francisco Barreto da Silva Martins"
 __email__ = "joaofbsm@dcc.ufmg.br"
@@ -8,84 +8,139 @@ __license__ = "GPL"
 __version__ = "3.0"
 
 import math
-import argparse
+import utils
 import numpy as np
-from tqdm import tqdm
-from node import Node
-from world import World
-from colony import Colony
-
-# TODO
-# - Remove unnecessary attributes from World
-# - Use Cython for speedup
-# - Update format of solution in ant
-
-def read_data(file_path, initial_pheromone):
-    nodes = []
-
-    with open(file_path, 'r') as f:
-        n, p = tuple(map(int, f.readline().split()))
-
-        for line in f:
-            line = line.split()
-            x = int(line[0])
-            y = int(line[1])
-            capacity = int(line[2])
-            demand = int(line[3])
-            node = Node(x, y, capacity, demand, initial_pheromone)
-            nodes.append(node)
-
-    return n, p, nodes
+from solution import Solution
 
 
-def main(args):
-    random_seed = 123456
-    initial_pheromone = 0.5
-    t_min = 0.001
-    t_max = 0.999
-    rho = 0.9  # TODO: Find optimal value
+def information_heuristic(world):
+    ni = []
 
-    np.random.seed(random_seed)
+    for node in range(len(world.nodes)):
+        ordered_nodes = sort_nodes(world, node)
+        all_nodes, sum_distance = allocate(world, node, ordered_nodes)
+        ni.append(all_nodes / sum_distance)
 
-    iterations = args.iterations
-    n, p, nodes = read_data(args.dataset, initial_pheromone)
-    world = World(n, p, nodes, args.alpha, args.beta, t_min, t_max)
-    ants = (n - p) if args.ants is None else args.ants
-    colony = Colony(ants)
+    return ni
 
-    g_best = (math.inf, [])
 
-    for i in tqdm(range(iterations)):
-        for ant in colony.ants:
-            ant.build_solution(world)
+def sort_nodes(world, center):
+    ordered_nodes = []
 
-        l_best, l_worst = world.evaluate_solutions(colony)
+    for node in range(len(world.nodes)):
+        if node != center:
+            ordered_nodes.append((node, world.distances[node][center]))
+    sorted(ordered_nodes, key=lambda x: x[1])
 
-        if world.is_stagnated():
-            world.reset_pheromones(initial_pheromone)
+    return ordered_nodes
+
+
+def allocate(world, center, ordered_nodes):
+    all_nodes = 0
+    sum_distance = 0
+    capacity = world.nodes[center].capacity
+
+    for node, distance in ordered_nodes:
+        demand = world.nodes[node].demand
+        if capacity - demand >= 0:
+            all_nodes += 1
+            sum_distance += distance
         else:
-            world.update_pheromones(rho, g_best, l_best, l_worst)
+            break
 
-        if l_best[0] < g_best[0]:
-            g_best = l_best
-
-        colony.reset_solutions()
-
-    print("\nBest solution\n"
-          "-------------\n"
-          "\n"
-          "Distance: {}\n"
-          "Medians: {}\n".format(g_best[0], g_best[1]))
+    return all_nodes, sum_distance
 
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description=("ACO with heuristics to"
-                                   " solve the capacitated p-medians problem"))
-    parser.add_argument("-i", "--iterations", type=int, default=50)
-    parser.add_argument("-a", "--ants", type=int, default=None)
-    parser.add_argument("--alpha", type=float, default=0.5)
-    parser.add_argument("--beta", type=float, default=0.5)
-    parser.add_argument("dataset")
-    args = parser.parse_args()
+def calculate_probabilities(world, possible_nodes, ni, alpha, beta):
+    n = world.n  # Number of nodes
 
-    main(args)
+    probabilities = np.zeros(n)
+    pheromones = [node.pheromone for node in world.nodes]
+
+    total_probability = 0
+    for node in possible_nodes:
+        total_probability += ((pheromones[node] ** alpha) *
+                              (ni[node] ** beta))
+
+    for node in range(n):
+        if node in possible_nodes:
+            probabilities[node] = (((pheromones[node] ** alpha) * 
+                                    (ni[node] ** beta)) /
+                                   total_probability)
+
+    return probabilities
+
+
+def evaluate_solutions(world, colony):
+    best = Solution(distance=math.inf)
+    worst = Solution(distance=0)
+
+    for ant in colony.ants:
+        association = GAP(world, ant)
+        total_distance = np.sum(np.multiply(association, world.distances))
+        
+        if total_distance < best.distance:
+            best.distance = total_distance
+            best.medians = ant.medians
+            best.association = association
+        
+        if total_distance > worst.distance:
+            worst.distance = total_distance
+            worst.medians = ant.medians
+            worst.association = association
+
+    return best, worst
+
+
+def GAP(world, ant):
+    n = world.n
+    p = world.p
+    centers = ant.medians  # Medians
+    clients = list(set(np.arange(n)) - set(centers))  # Non-medians
+    association = np.zeros((n, n))
+
+    ordered_clients = sort_clients(world, clients, centers)
+    for client in ordered_clients:
+        ordered_centers = sort_centers(world, client[0], centers)
+        for center in ordered_centers:
+            capacity = world.nodes[center[0]].actual_capacity
+            if capacity - world.nodes[client[0]].demand >= 0:
+                capacity -= world.nodes[client[0]].demand
+                association[client[0]][center[0]] = 1
+                break 
+
+    return association
+
+
+def sort_clients(world, clients, centers):
+    sorted_clients = []
+
+    for client in clients:
+        distances = []
+        for center in centers:
+            distances.append(utils.euclidean_distance(world.nodes[client],
+                                                      world.nodes[center]))
+
+        sorted_clients.append((client, sorted(distances)[0]))
+    
+    return sorted(sorted_clients, key=lambda x: x[1])
+
+
+def sort_centers(world, client, centers):
+    sorted_centers = []
+    for center in centers:
+        sorted_centers.append((center, 
+                               utils.euclidean_distance(world.nodes[client], 
+                                                        world.nodes[center])))
+
+    return sorted(sorted_centers, key=lambda x: x[1])
+
+
+def is_stagnated(world, t_min, t_max):
+    total_pheromone = world.total_pheromone()
+    threshold = world.p * t_max + (world.n - world.p) * t_min
+
+    if total_pheromone <= threshold and total_pheromone + 0.5 >= threshold:
+        return True
+    else:
+        return False
