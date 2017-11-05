@@ -92,10 +92,8 @@ def is_stagnated(world, t_min, t_max):
     total_pheromone = world.total_pheromone()
     stagnation_threshold = world.p * t_max + (world.n - world.p) * t_min
 
-
     # Empirical 0.5 threshold to conclude stagnation
-    if (total_pheromone <= stagnation_threshold 
-        and total_pheromone + 0.5 >= stagnation_threshold):
+    if total_pheromone >= stagnation_threshold - 0.5:
         return True
     else:
         return False

@@ -1238,6 +1238,7 @@ static PyObject *__pyx_pf_5utils_read_data(CYTHON_UNUSED PyObject *__pyx_self, P
 static PyObject *__pyx_pf_5utils_2write_data(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_output_dir, PyObject *__pyx_v_output); /* proto */
 static PyObject *__pyx_pf_5utils_4generate_seeds(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_seed, PyObject *__pyx_v_n_repetitions); /* proto */
 static PyObject *__pyx_pf_5utils_6euclidean_distance(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_a, PyObject *__pyx_v_b); /* proto */
+static PyObject *__pyx_float_0_5;
 static PyObject *__pyx_int_0;
 static PyObject *__pyx_int_2;
 static PyObject *__pyx_int_4294967295;
@@ -1580,7 +1581,7 @@ static PyObject *__pyx_pf_5utils_read_data(CYTHON_UNUSED PyObject *__pyx_self, P
  *             y = int(line[1])
  *             capacity = int(line[2])             # <<<<<<<<<<<<<<
  *             demand = int(line[3])
- *             node = Node(x, y, capacity, demand, 0)
+ *             node = Node(x, y, capacity, demand, 0.5)
  */
             __pyx_t_2 = __Pyx_GetItemInt(__pyx_v_line, 2, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 27, __pyx_L7_error)
             __Pyx_GOTREF(__pyx_t_2);
@@ -1594,7 +1595,7 @@ static PyObject *__pyx_pf_5utils_read_data(CYTHON_UNUSED PyObject *__pyx_self, P
  *             y = int(line[1])
  *             capacity = int(line[2])
  *             demand = int(line[3])             # <<<<<<<<<<<<<<
- *             node = Node(x, y, capacity, demand, 0)
+ *             node = Node(x, y, capacity, demand, 0.5)
  *             nodes.append(node)
  */
             __pyx_t_4 = __Pyx_GetItemInt(__pyx_v_line, 3, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 28, __pyx_L7_error)
@@ -1608,7 +1609,7 @@ static PyObject *__pyx_pf_5utils_read_data(CYTHON_UNUSED PyObject *__pyx_self, P
             /* "utils.pyx":29
  *             capacity = int(line[2])
  *             demand = int(line[3])
- *             node = Node(x, y, capacity, demand, 0)             # <<<<<<<<<<<<<<
+ *             node = Node(x, y, capacity, demand, 0.5)             # <<<<<<<<<<<<<<
  *             nodes.append(node)
  * 
  */
@@ -1628,7 +1629,7 @@ static PyObject *__pyx_pf_5utils_read_data(CYTHON_UNUSED PyObject *__pyx_self, P
             }
             #if CYTHON_FAST_PYCALL
             if (PyFunction_Check(__pyx_t_4)) {
-              PyObject *__pyx_temp[6] = {__pyx_t_5, __pyx_v_x, __pyx_v_y, __pyx_v_capacity, __pyx_v_demand, __pyx_int_0};
+              PyObject *__pyx_temp[6] = {__pyx_t_5, __pyx_v_x, __pyx_v_y, __pyx_v_capacity, __pyx_v_demand, __pyx_float_0_5};
               __pyx_t_2 = __Pyx_PyFunction_FastCall(__pyx_t_4, __pyx_temp+1-__pyx_t_11, 5+__pyx_t_11); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 29, __pyx_L7_error)
               __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
               __Pyx_GOTREF(__pyx_t_2);
@@ -1636,7 +1637,7 @@ static PyObject *__pyx_pf_5utils_read_data(CYTHON_UNUSED PyObject *__pyx_self, P
             #endif
             #if CYTHON_FAST_PYCCALL
             if (__Pyx_PyFastCFunction_Check(__pyx_t_4)) {
-              PyObject *__pyx_temp[6] = {__pyx_t_5, __pyx_v_x, __pyx_v_y, __pyx_v_capacity, __pyx_v_demand, __pyx_int_0};
+              PyObject *__pyx_temp[6] = {__pyx_t_5, __pyx_v_x, __pyx_v_y, __pyx_v_capacity, __pyx_v_demand, __pyx_float_0_5};
               __pyx_t_2 = __Pyx_PyCFunction_FastCall(__pyx_t_4, __pyx_temp+1-__pyx_t_11, 5+__pyx_t_11); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 29, __pyx_L7_error)
               __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
               __Pyx_GOTREF(__pyx_t_2);
@@ -1660,9 +1661,9 @@ static PyObject *__pyx_pf_5utils_read_data(CYTHON_UNUSED PyObject *__pyx_self, P
               __Pyx_INCREF(__pyx_v_demand);
               __Pyx_GIVEREF(__pyx_v_demand);
               PyTuple_SET_ITEM(__pyx_t_12, 3+__pyx_t_11, __pyx_v_demand);
-              __Pyx_INCREF(__pyx_int_0);
-              __Pyx_GIVEREF(__pyx_int_0);
-              PyTuple_SET_ITEM(__pyx_t_12, 4+__pyx_t_11, __pyx_int_0);
+              __Pyx_INCREF(__pyx_float_0_5);
+              __Pyx_GIVEREF(__pyx_float_0_5);
+              PyTuple_SET_ITEM(__pyx_t_12, 4+__pyx_t_11, __pyx_float_0_5);
               __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_4, __pyx_t_12, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 29, __pyx_L7_error)
               __Pyx_GOTREF(__pyx_t_2);
               __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
@@ -1673,7 +1674,7 @@ static PyObject *__pyx_pf_5utils_read_data(CYTHON_UNUSED PyObject *__pyx_self, P
 
             /* "utils.pyx":30
  *             demand = int(line[3])
- *             node = Node(x, y, capacity, demand, 0)
+ *             node = Node(x, y, capacity, demand, 0.5)
  *             nodes.append(node)             # <<<<<<<<<<<<<<
  * 
  *     return n, p, nodes
@@ -3214,6 +3215,7 @@ static int __Pyx_InitCachedConstants(void) {
 
 static int __Pyx_InitGlobals(void) {
   if (__Pyx_InitStrings(__pyx_string_tab) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
+  __pyx_float_0_5 = PyFloat_FromDouble(0.5); if (unlikely(!__pyx_float_0_5)) __PYX_ERR(0, 1, __pyx_L1_error)
   __pyx_int_0 = PyInt_FromLong(0); if (unlikely(!__pyx_int_0)) __PYX_ERR(0, 1, __pyx_L1_error)
   __pyx_int_2 = PyInt_FromLong(2); if (unlikely(!__pyx_int_2)) __PYX_ERR(0, 1, __pyx_L1_error)
   __pyx_int_4294967295 = PyInt_FromString((char *)"4294967295", 0, 0); if (unlikely(!__pyx_int_4294967295)) __PYX_ERR(0, 1, __pyx_L1_error)

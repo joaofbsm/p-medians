@@ -1031,10 +1031,10 @@ static CYTHON_INLINE PyObject* __Pyx_PyObject_CallNoArg(PyObject *func);
 
 /* PyFloatBinop.proto */
 #if !CYTHON_COMPILING_IN_PYPY
-static PyObject* __Pyx_PyFloat_AddObjC(PyObject *op1, PyObject *op2, double floatval, int inplace);
+static PyObject* __Pyx_PyFloat_SubtractObjC(PyObject *op1, PyObject *op2, double floatval, int inplace);
 #else
-#define __Pyx_PyFloat_AddObjC(op1, op2, floatval, inplace)\
-    (inplace ? PyNumber_InPlaceAdd(op1, op2) : PyNumber_Add(op1, op2))
+#define __Pyx_PyFloat_SubtractObjC(op1, op2, floatval, inplace)\
+    (inplace ? PyNumber_InPlaceSubtract(op1, op2) : PyNumber_Subtract(op1, op2))
 #endif
 
 /* Import.proto */
@@ -3650,7 +3650,6 @@ static PyObject *__pyx_pf_3aco_10is_stagnated(CYTHON_UNUSED PyObject *__pyx_self
   PyObject *__pyx_t_3 = NULL;
   PyObject *__pyx_t_4 = NULL;
   int __pyx_t_5;
-  int __pyx_t_6;
   __Pyx_RefNannySetupContext("is_stagnated", 0);
 
   /* "aco.pyx":92
@@ -3688,7 +3687,7 @@ static PyObject *__pyx_pf_3aco_10is_stagnated(CYTHON_UNUSED PyObject *__pyx_self
  *     total_pheromone = world.total_pheromone()
  *     stagnation_threshold = world.p * t_max + (world.n - world.p) * t_min             # <<<<<<<<<<<<<<
  * 
- * 
+ *     # Empirical 0.5 threshold to conclude stagnation
  */
   __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_world, __pyx_n_s_p); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 93, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
@@ -3713,50 +3712,24 @@ static PyObject *__pyx_pf_3aco_10is_stagnated(CYTHON_UNUSED PyObject *__pyx_self
   __pyx_v_stagnation_threshold = __pyx_t_4;
   __pyx_t_4 = 0;
 
-  /* "aco.pyx":97
+  /* "aco.pyx":96
  * 
  *     # Empirical 0.5 threshold to conclude stagnation
- *     if (total_pheromone <= stagnation_threshold             # <<<<<<<<<<<<<<
- *         and total_pheromone + 0.5 >= stagnation_threshold):
- *         return True
- */
-  __pyx_t_4 = PyObject_RichCompare(__pyx_v_total_pheromone, __pyx_v_stagnation_threshold, Py_LE); __Pyx_XGOTREF(__pyx_t_4); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 97, __pyx_L1_error)
-  __pyx_t_6 = __Pyx_PyObject_IsTrue(__pyx_t_4); if (unlikely(__pyx_t_6 < 0)) __PYX_ERR(0, 97, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  if (__pyx_t_6) {
-  } else {
-    __pyx_t_5 = __pyx_t_6;
-    goto __pyx_L4_bool_binop_done;
-  }
-
-  /* "aco.pyx":98
- *     # Empirical 0.5 threshold to conclude stagnation
- *     if (total_pheromone <= stagnation_threshold
- *         and total_pheromone + 0.5 >= stagnation_threshold):             # <<<<<<<<<<<<<<
+ *     if total_pheromone >= stagnation_threshold - 0.5:             # <<<<<<<<<<<<<<
  *         return True
  *     else:
  */
-  __pyx_t_4 = __Pyx_PyFloat_AddObjC(__pyx_v_total_pheromone, __pyx_float_0_5, 0.5, 0); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 98, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyFloat_SubtractObjC(__pyx_v_stagnation_threshold, __pyx_float_0_5, 0.5, 0); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 96, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
-  __pyx_t_3 = PyObject_RichCompare(__pyx_t_4, __pyx_v_stagnation_threshold, Py_GE); __Pyx_XGOTREF(__pyx_t_3); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 98, __pyx_L1_error)
+  __pyx_t_3 = PyObject_RichCompare(__pyx_v_total_pheromone, __pyx_t_4, Py_GE); __Pyx_XGOTREF(__pyx_t_3); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 96, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  __pyx_t_6 = __Pyx_PyObject_IsTrue(__pyx_t_3); if (unlikely(__pyx_t_6 < 0)) __PYX_ERR(0, 98, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_PyObject_IsTrue(__pyx_t_3); if (unlikely(__pyx_t_5 < 0)) __PYX_ERR(0, 96, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  __pyx_t_5 = __pyx_t_6;
-  __pyx_L4_bool_binop_done:;
-
-  /* "aco.pyx":97
- * 
- *     # Empirical 0.5 threshold to conclude stagnation
- *     if (total_pheromone <= stagnation_threshold             # <<<<<<<<<<<<<<
- *         and total_pheromone + 0.5 >= stagnation_threshold):
- *         return True
- */
   if (__pyx_t_5) {
 
-    /* "aco.pyx":99
- *     if (total_pheromone <= stagnation_threshold
- *         and total_pheromone + 0.5 >= stagnation_threshold):
+    /* "aco.pyx":97
+ *     # Empirical 0.5 threshold to conclude stagnation
+ *     if total_pheromone >= stagnation_threshold - 0.5:
  *         return True             # <<<<<<<<<<<<<<
  *     else:
  *         return False
@@ -3766,16 +3739,16 @@ static PyObject *__pyx_pf_3aco_10is_stagnated(CYTHON_UNUSED PyObject *__pyx_self
     __pyx_r = Py_True;
     goto __pyx_L0;
 
-    /* "aco.pyx":97
+    /* "aco.pyx":96
  * 
  *     # Empirical 0.5 threshold to conclude stagnation
- *     if (total_pheromone <= stagnation_threshold             # <<<<<<<<<<<<<<
- *         and total_pheromone + 0.5 >= stagnation_threshold):
+ *     if total_pheromone >= stagnation_threshold - 0.5:             # <<<<<<<<<<<<<<
  *         return True
+ *     else:
  */
   }
 
-  /* "aco.pyx":101
+  /* "aco.pyx":99
  *         return True
  *     else:
  *         return False             # <<<<<<<<<<<<<<
@@ -5700,7 +5673,7 @@ static CYTHON_INLINE PyObject* __Pyx_PyObject_CallNoArg(PyObject *func) {
 
 /* PyFloatBinop */
         #if !CYTHON_COMPILING_IN_PYPY
-static PyObject* __Pyx_PyFloat_AddObjC(PyObject *op1, PyObject *op2, double floatval, CYTHON_UNUSED int inplace) {
+static PyObject* __Pyx_PyFloat_SubtractObjC(PyObject *op1, PyObject *op2, double floatval, CYTHON_UNUSED int inplace) {
     const double b = floatval;
     double a, result;
     if (likely(PyFloat_CheckExact(op1))) {
@@ -5757,10 +5730,10 @@ static PyObject* __Pyx_PyFloat_AddObjC(PyObject *op1, PyObject *op2, double floa
             if (unlikely(a == -1.0 && PyErr_Occurred())) return NULL;
         }
     } else {
-        return (inplace ? PyNumber_InPlaceAdd : PyNumber_Add)(op1, op2);
+        return (inplace ? PyNumber_InPlaceSubtract : PyNumber_Subtract)(op1, op2);
     }
-        PyFPE_START_PROTECT("add", return NULL)
-        result = a + b;
+        PyFPE_START_PROTECT("subtract", return NULL)
+        result = a - b;
         PyFPE_END_PROTECT(result)
         return PyFloat_FromDouble(result);
 }

@@ -26,7 +26,7 @@ def read_data(file_path):
             y = int(line[1])
             capacity = int(line[2])
             demand = int(line[3])
-            node = Node(x, y, capacity, demand, 0)
+            node = Node(x, y, capacity, demand, 0.5)
             nodes.append(node)
 
     return n, p, nodes
