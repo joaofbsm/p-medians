@@ -53,20 +53,16 @@ def allocate(world, center, ordered_nodes):
 
 def calculate_probabilities(world, possible_nodes, ni, alpha, beta):
     n = world.n  # Number of nodes
-
-    probabilities = np.zeros(n)
     pheromones = np.array([node.pheromone for node in world.nodes])
 
-    total_probability = 0
-    for node in possible_nodes:
-        total_probability += ((pheromones[node] ** alpha) *
-                              (ni[node] ** beta))
-
-    for node in range(n):
-        if node in possible_nodes:
-            probabilities[node] = (((pheromones[node] ** alpha) * 
-                                    (ni[node] ** beta)) /
-                                   total_probability)
+    combination = np.multiply(np.power(np.multiply(pheromones, 
+                                                   possible_nodes),
+                                       alpha),
+                              np.power(np.multiply(ni,
+                                                   possible_nodes),
+                                       beta))
+    total_probabilities = np.sum(combination)
+    probabilities = np.divide(combination, total_probabilities)
 
     return probabilities
 

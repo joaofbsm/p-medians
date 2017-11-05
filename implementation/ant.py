@@ -20,14 +20,14 @@ class Ant:
     def build_solution(self, world, ni, alpha, beta):
         n = world.n
         p = world.p
-        unchosen = [*range(n)]
+        unchosen = np.ones(n)
 
         for median in range(p):
             probabilities = aco.calculate_probabilities(world, unchosen, ni,
                                                         alpha, beta)
             choice = np.random.choice(n, p=probabilities)
             self.medians.append(choice)
-            unchosen.remove(choice)
+            unchosen[choice] = 0
 
 
     def reset_solution(self):
