@@ -24,8 +24,6 @@ from colony import Colony
 from solution import Solution
 
 # TODO
-# - Run cProfile
-# - Use Cython for speedup
 # - Implement output writing
 # - Implement repetitions, average and std deviation calculation
 
