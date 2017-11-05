@@ -18,64 +18,82 @@ import utils
 import argparse
 import numpy as np
 from tqdm import tqdm
-from node import Node
 from world import World
 from colony import Colony
 from solution import Solution
 
 # TODO
-# - Implement output writing
-# - Implement repetitions, average and std deviation calculation
+# - Add comments
 
 
 def main(args):
-    random_seed = 123456
+    # Parameters
+    initial_seed = 123456
+    n_repetitions = 30
+    n_iterations = args.iterations
     initial_pheromone = 0.5
     t_min = 0.001
     t_max = 0.999
-    rho = 0.9  # TODO: Find optimal value
-    alpha = args.alpha  # TODO: Find optimal value
-    beta = args.beta  # TODO: Find optimal value
+    rho = 0.9  
+    alpha = args.alpha  
+    beta = args.beta  
 
-    np.random.seed(random_seed)
-    iterations = args.iterations
-    n, p, nodes = utils.read_data(args.dataset, initial_pheromone)
+    # Initializations
+    random_seeds = utils.generate_seeds(initial_seed, n_repetitions)
+    n, p, nodes = utils.read_data(args.dataset)
     world = World(n, p, nodes)
     n_ants = (n - p) if args.ants is None else args.ants
     colony = Colony(n_ants)
     ni = aco.information_heuristic(world)
+    dataset_name = args.dataset.split('/')[-1].split('.')[0]
+    output = np.zeros((n_repetitions, n_iterations, 3))
+    output_dir = "../results/{}rho{}alpha{}beta{}ants{}/".format(dataset_name, 
+                                                                rho,
+                                                                alpha,
+                                                                beta,
+                                                                n_ants)
 
-    g_best = Solution(distance=math.inf)
+    # Main loop
+    for repetition in range(n_repetitions):
+        np.random.seed(random_seeds[repetition])
 
-    for i in tqdm(range(iterations)):
-        for ant in colony.ants:
-            ant.build_solution(world, ni, alpha, beta)
+        g_best = Solution(distance=math.inf)
+        world.reset_pheromones(initial_pheromone)
 
-        l_best, l_worst = aco.evaluate_solutions(world, colony)
+        print("Repetition {}\n".format(repetition))
 
-        world.update_pheromones(rho, g_best, l_best, l_worst)
+        for iteration in tqdm(range(n_iterations)):
+            for ant in colony.ants:
+                ant.build_solution(world, ni, alpha, beta)
 
-        if aco.is_stagnated(world, t_min, t_max):
-            world.reset_pheromones(initial_pheromone)
+            l_best, l_worst = aco.evaluate_solutions(world, colony)
 
-        if l_best.distance < g_best.distance:
-            g_best = l_best
+            world.update_pheromones(rho, g_best, l_best, l_worst)
 
-        colony.reset_solutions()
+            if aco.is_stagnated(world, t_min, t_max):
+                world.reset_pheromones(initial_pheromone)
 
-    print("\nBest solution\n"
-          "-------------\n"
-          "\n"
-          "Distance: {}\n"
-          "Medians: {}\n"
-          "Association: {}\n".format(g_best.distance, 
-                                     g_best.medians,
-                                     g_best.association))
+            if l_best.distance < g_best.distance:
+                g_best = l_best
+
+            colony.reset_solutions()
+
+            output[repetition][iteration][0] = g_best.distance
+            output[repetition][iteration][1] = l_best.distance
+            output[repetition][iteration][2] = l_worst.distance
+
+        print("\nBest solution\n"
+              "-------------\n"
+              "Distance: {}\n"
+              "Medians: {}\n".format(g_best.distance, 
+                                     g_best.medians))
+
+    utils.write_data(output_dir, output)
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description=("ACO with heuristics to"
-                                   " solve the capacitated p-medians problem"))
+    parser = argparse.ArgumentParser(description=("ACO with heuristics to "
+                                    "solve the capacitated p-medians problem"))
     parser.add_argument("-i", "--iterations", type=int, default=50)
     parser.add_argument("-a", "--ants", type=int, default=None)
     parser.add_argument("--alpha", type=float, default=0.5)
