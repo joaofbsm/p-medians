@@ -8,6 +8,7 @@ __license__ = "GPL"
 __version__ = "3.0"
 
 import math
+import numpy as np
 from node import Node
 
 
@@ -27,6 +28,10 @@ def read_data(file_path, initial_pheromone):
             nodes.append(node)
 
     return n, p, nodes
+
+
+def write_data():
+    pass
 
 
 def euclidean_distance(a, b):

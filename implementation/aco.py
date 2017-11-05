@@ -21,7 +21,7 @@ def information_heuristic(world):
         all_nodes, sum_distance = allocate(world, node, ordered_nodes)
         ni.append(all_nodes / sum_distance)
 
-    return ni
+    return np.array(ni)
 
 
 def sort_nodes(world, center):
@@ -55,7 +55,7 @@ def calculate_probabilities(world, possible_nodes, ni, alpha, beta):
     n = world.n  # Number of nodes
 
     probabilities = np.zeros(n)
-    pheromones = [node.pheromone for node in world.nodes]
+    pheromones = np.array([node.pheromone for node in world.nodes])
 
     total_probability = 0
     for node in possible_nodes:
