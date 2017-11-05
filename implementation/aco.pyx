@@ -14,6 +14,12 @@ from solution import Solution
 
 
 def information_heuristic(world):
+    """Information heuristic based in cluster density.
+    
+    Arguments:
+        world -- World structural representation.
+    """
+
     ni = []
 
     for node in range(len(world.nodes)):
@@ -25,6 +31,13 @@ def information_heuristic(world):
 
 
 def sort_nodes(world, center):
+    """Sort all nodes based on their distance to a central node.
+
+    Arguments:
+        world -- World structural representation.
+        center -- Central node.
+    """
+
     ordered_nodes = []
 
     for node in range(len(world.nodes)):
@@ -36,6 +49,15 @@ def sort_nodes(world, center):
 
 
 def allocate(world, center, ordered_nodes):
+    """Assign nodes to a central node until its capacity is fulfilled.
+
+    Arguments:
+        world -- World structural representation.
+        center -- Central nodes.
+        ordered_nodes -- Array of sorted nodes according to their distance to 
+                         center.
+    """
+
     all_nodes = 0
     sum_distance = 0
     capacity = world.nodes[center].capacity
@@ -52,6 +74,17 @@ def allocate(world, center, ordered_nodes):
 
 
 def calculate_probabilities(world, possible_nodes, ni, alpha, beta):
+    """Calculate the probability to choose each node from a list of possible
+    nodes.
+    
+    Arguments:
+        world -- World structural representation.
+        possible_nodes -- List of choosable nodes .
+        ni -- Information heuristic vector.
+        alpha -- Pheromone exponent in probability calculation.
+        beta -- Information Heuristic exponent in probability calculation.
+    """
+    
     n = world.n  # Number of nodes
     pheromones = np.array([node.pheromone for node in world.nodes])
 
@@ -68,6 +101,13 @@ def calculate_probabilities(world, possible_nodes, ni, alpha, beta):
 
 
 def evaluate_solutions(world, colony):
+    """Evaluate the solutions created by the ants in the colony.
+    
+    Arguments:
+        world -- World structural representation.
+        colony -- Colony of ants.
+    """
+
     best = Solution(distance=math.inf)
     worst = Solution(distance=0)
 
@@ -89,6 +129,14 @@ def evaluate_solutions(world, colony):
 
 
 def is_stagnated(world, t_min, t_max):
+    """Check if the pheromone levels are stagnating the solution.
+    
+    Arguments:
+        world -- World structural representation.
+        t_min -- Min pheromone level.
+        t_max -- Max pheromone level.
+    """
+
     total_pheromone = world.total_pheromone()
     stagnation_threshold = world.p * t_max + (world.n - world.p) * t_min
 

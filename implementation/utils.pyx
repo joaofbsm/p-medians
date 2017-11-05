@@ -15,6 +15,12 @@ from node import Node
 
 
 def read_data(file_path):
+    """Read dataset from the specified file path.
+    
+    Arguments:
+        file_path -- Path where the dataset is stored.
+    """
+
     nodes = []
 
     with open(file_path, 'r') as f:
@@ -26,13 +32,20 @@ def read_data(file_path):
             y = int(line[1])
             capacity = int(line[2])
             demand = int(line[3])
-            node = Node(x, y, capacity, demand, 0.5)
+            node = Node(x, y, capacity, demand, 0)
             nodes.append(node)
 
     return n, p, nodes
 
 
 def write_data(output_dir, output):
+    """Write the produced data to the correct directory.
+    
+    Arguments:
+        output_dir -- Directory name for the output.
+        output -- 3D array with the data gathered through the execution.
+    """
+
     repetitions, iterations, _ = output.shape
 
     os.makedirs(output_dir, exist_ok=True)

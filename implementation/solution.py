@@ -12,6 +12,14 @@ import math
 
 class Solution:
     def __init__(self, distance=None, medians=[], association=None):
+        """Solution constructor.
+        
+        Keyword arguments:
+            distance -- Total solution distance (default: {None})
+            medians -- Array of median nodes index (default: {[]})
+            association -- Association matrix of the solution (default: {None})
+        """
+        
         self.distance = distance
         self.medians = medians
         self.association = association

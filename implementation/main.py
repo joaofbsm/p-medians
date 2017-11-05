@@ -29,8 +29,8 @@ def main(args):
     n_repetitions = 30
     n_iterations = args.iterations
     initial_pheromone = 0.5
-    t_min = 0.001  # Min pheromone
-    t_max = 0.999  # Max pheromone
+    t_min = 0.001  # Min pheromone level
+    t_max = 0.999  # Max pheromone level
     rho = 0.9  # Pheromone decay rate
     alpha = args.alpha  
     beta = args.beta  
@@ -41,19 +41,22 @@ def main(args):
     world = World(n, p, nodes)
     n_ants = (n - p) if args.ants is None else args.ants
     colony = Colony(n_ants)
-    ni = aco.information_heuristic(world)
+    ni = aco.information_heuristic(world)  # Information Heuristic
     dataset_name = args.dataset.split('/')[-1].split('.')[0]
     output = np.zeros((n_repetitions, n_iterations, 3))
-    output_dir = "../results/{}rho{}alpha{}beta{}ants{}/".format(dataset_name, 
-                                                                rho,
-                                                                alpha,
-                                                                beta,
-                                                                n_ants)
+    output_dir = "../results/{}it{}rho{}alpha{}beta{}ants{}/".format(
+                                                                  dataset_name, 
+                                                                  n_iterations,
+                                                                  rho,
+                                                                  alpha,
+                                                                  beta,
+                                                                  n_ants)
 
     # Main loop
     for repetition in range(n_repetitions):
         np.random.seed(random_seeds[repetition])
 
+        # Reset things for new repetition
         g_best = Solution(distance=math.inf)
         world.reset_pheromones(initial_pheromone)
 
@@ -67,14 +70,18 @@ def main(args):
 
             world.update_pheromones(rho, g_best, l_best, l_worst)
 
+            # Check algorithm stagnation
             if aco.is_stagnated(world, t_min, t_max):
                 world.reset_pheromones(initial_pheromone)
 
+            # Update global solution
             if l_best.distance < g_best.distance:
                 g_best = l_best
 
+            # Reset for next iteration
             colony.reset_solutions()
 
+            # Store output data
             output[repetition][iteration][0] = g_best.distance
             output[repetition][iteration][1] = l_best.distance
             output[repetition][iteration][2] = l_worst.distance
@@ -89,6 +96,7 @@ def main(args):
 
 
 if __name__ == "__main__":
+    # Argument parsing
     parser = argparse.ArgumentParser(description=("ACO with heuristics to "
                                     "solve the capacitated p-medians problem"))
     parser.add_argument("-i", "--iterations", type=int, default=50)

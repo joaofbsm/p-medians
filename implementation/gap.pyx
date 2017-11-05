@@ -12,19 +12,32 @@ import numpy as np
 
 
 def GAP(world, ant):
-    n = world.n
-    p = world.p
+    """General Assignment Problem Heuristic.
+
+    Returns the association matrix for the solution.
+
+    Arguments:
+        world -- World structural representation.
+        ant -- Ant entity.
+    """
+
+    n = world.n  # Number of nodes
+    p = world.p  # Number of medians
     centers = ant.medians  # Medians
     clients = list(set(np.arange(n)) - set(centers))  # Non-medians
-    association = np.zeros((n, n))
+    association = np.zeros((n, n))  # Associates nodes with medians
 
-    ordered_clients = sort_clients(world, clients, centers)
+    # Sort clients decrescently by their demand
+    ordered_clients = sort_clients(world, clients)
     for client in ordered_clients:
+        # Sort centers by their distance to client
         ordered_centers = sort_centers(world, client[0], centers)
 
+        # Attribute client to a center
         for center in ordered_centers:
             capacity = world.nodes[center[0]].actual_capacity
 
+            # Attribute it to the first center with available capacity
             if capacity - world.nodes[client[0]].demand >= 0:
                 capacity -= world.nodes[client[0]].demand
                 world.nodes[center[0]].actual_capacity = capacity
@@ -38,7 +51,14 @@ def GAP(world, ant):
     return association
 
 
-def sort_clients(world, clients, centers):
+def sort_clients(world, clients):
+    """Sort clients by their demand.
+    
+    Arguments:
+        world -- World structural representation.
+        clients -- List of client nodes.
+    """
+
     sorted_clients = []
 
     for client in clients:
@@ -48,6 +68,14 @@ def sort_clients(world, clients, centers):
 
 
 def sort_centers(world, client, centers):
+    """Sort centers by their distance to client.
+    
+    Arguments:
+        world -- World structural representation.
+        clients -- List of client nodes.
+        centers -- List of center(median) nodes.
+    """
+    
     sorted_centers = []
     for center in centers:
         sorted_centers.append((center, 

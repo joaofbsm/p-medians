@@ -12,6 +12,12 @@ from ant import Ant
 
 class Colony:
     def __init__(self, n):
+        """Colony constructor.
+        
+        Arguments:
+            n -- Number of ants in the colony.
+        """
+
         self.ants = []
 
         for i in range(n):
@@ -19,6 +25,8 @@ class Colony:
     
 
     def reset_solutions(self):
+        """Reset the solution for all the ants in the colony."""
+        
         for ant in self.ants:
             ant.reset_solution()
             
