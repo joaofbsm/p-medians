@@ -11,5 +11,5 @@ $ python3 setup.py build_ext --inplace
 After that, the code is executed with the following arguments:
 
 ```
-$ python3 main.py [-i ITERATIONS] [-a ANTS] [--alpha ALPHA] [--beta BETA] dataset
+$ python3 main.py [-i ITERATIONS] [-a ANTS] [--alpha ALPHA] [--beta BETA] [--rho RHO] dataset
 ```

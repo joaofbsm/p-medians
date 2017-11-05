@@ -30,7 +30,7 @@ def main(args):
     initial_pheromone = 0.5
     t_min = 0.001  # Min pheromone level
     t_max = 0.999  # Max pheromone level
-    rho = 0.9  # Pheromone decay rate
+    rho = args.rho  # Pheromone decay rate
     alpha = args.alpha  
     beta = args.beta  
 
@@ -102,6 +102,7 @@ if __name__ == "__main__":
     parser.add_argument("-a", "--ants", type=int, default=None)
     parser.add_argument("--alpha", type=float, default=0.5)
     parser.add_argument("--beta", type=float, default=0.5)
+    parser.add_argument("--rho", type=float, default=0.9)
     parser.add_argument("dataset")
     args = parser.parse_args()
 
