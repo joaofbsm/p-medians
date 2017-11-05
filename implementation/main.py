@@ -26,6 +26,8 @@ from solution import Solution
 # TODO
 # - Run cProfile
 # - Use Cython for speedup
+# - Implement output writing
+# - Implement repetitions, average and std deviation calculation
 
 
 def main(args):

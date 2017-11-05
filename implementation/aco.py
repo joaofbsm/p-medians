@@ -1,17 +1,14 @@
 #!/usr/bin/env python3
 
-"""
-ACO as MMAS and GAP heuristic methods to be used for the capacitated p-medians
-problem.
-"""
+"""ACO(MMAS) methods to solve the capacitated p-medians problem"""
 
 __author__ = "João Francisco Barreto da Silva Martins"
 __email__ = "joaofbsm@dcc.ufmg.br"
 __license__ = "GPL"
 __version__ = "3.0"
 
+import gap
 import math
-import utils
 import numpy as np
 from solution import Solution
 
@@ -79,7 +76,7 @@ def evaluate_solutions(world, colony):
     worst = Solution(distance=0)
 
     for ant in colony.ants:
-        association = GAP(world, ant)
+        association = gap.GAP(world, ant)
         total_distance = np.sum(np.multiply(association, world.distances))
         
         if total_distance < best.distance:
@@ -93,60 +90,6 @@ def evaluate_solutions(world, colony):
             worst.association = association
 
     return best, worst
-
-
-def GAP(world, ant):
-    n = world.n
-    p = world.p
-    centers = ant.medians  # Medians
-    clients = list(set(np.arange(n)) - set(centers))  # Non-medians
-    association = np.zeros((n, n))
-
-    ordered_clients = sort_clients(world, clients, centers)
-    for client in ordered_clients:
-        ordered_centers = sort_centers(world, client[0], centers)
-
-        attributed = False
-
-        for center in ordered_centers:
-            capacity = world.nodes[center[0]].actual_capacity
-            if capacity - world.nodes[client[0]].demand >= 0:
-                capacity -= world.nodes[client[0]].demand
-                world.nodes[center[0]].actual_capacity = capacity
-                association[client[0]][center[0]] = 1
-                attributed = True
-                break 
-
-        if not attributed:
-            print("FODEU")
-            input()
-
-    # Reset nodes capacity
-    for node in world.nodes:
-        node.actual_capacity = node.capacity
-
-
-
-    return association
-
-
-def sort_clients(world, clients, centers):
-    sorted_clients = []
-
-    for client in clients:
-        sorted_clients.append((client, world.nodes[client].demand))
-    
-    return sorted(sorted_clients, key=lambda x: x[1], reverse=True)
-
-
-def sort_centers(world, client, centers):
-    sorted_centers = []
-    for center in centers:
-        sorted_centers.append((center, 
-                               utils.euclidean_distance(world.nodes[client], 
-                                                        world.nodes[center])))
-
-    return sorted(sorted_centers, key=lambda x: x[1])
 
 
 def is_stagnated(world, t_min, t_max):
