@@ -61,7 +61,7 @@ def generate_seeds(seed, n_repetitions):
 
 
 def euclidean_distance(a, b):
-    """2D euclidian distance calculation
+    """2D euclidian distance calculation.
     
     Arguments:
         a -- First point in 2D space.

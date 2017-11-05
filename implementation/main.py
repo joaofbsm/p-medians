@@ -22,19 +22,16 @@ from world import World
 from colony import Colony
 from solution import Solution
 
-# TODO
-# - Add comments
-
 
 def main(args):
     # Parameters
-    initial_seed = 123456
+    initial_seed = 123456  # Used to generate the set of seeds for repetitions
     n_repetitions = 30
     n_iterations = args.iterations
     initial_pheromone = 0.5
-    t_min = 0.001
-    t_max = 0.999
-    rho = 0.9  
+    t_min = 0.001  # Min pheromone
+    t_max = 0.999  # Max pheromone
+    rho = 0.9  # Pheromone decay rate
     alpha = args.alpha  
     beta = args.beta  
 
