@@ -58,6 +58,5 @@ class World:
 
 
     def reset_pheromones(self, initial_pheromone):
-        print("Reseting pheromones")
         for node in self.nodes:
             node.pheromone = initial_pheromone

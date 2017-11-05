@@ -1,6 +1,11 @@
 #!/usr/bin/env python3
 
-"""ACO with heuristics as a solution to the capacitated p-medians problem"""
+"""
+ACO with heuristics as a solution to the capacitated p-medians problem based in
+the paper De França, Fabrício Olivetti, Fernando J. Von Zuben, and Leandro 
+Nunes De Castro. "Max min ant system and capacitated p-medians: Extensions and 
+improved solutions." Informatica 29.2 (2005).
+"""
 
 __author__ = "João Francisco Barreto da Silva Martins"
 __email__ = "joaofbsm@dcc.ufmg.br"
@@ -19,14 +24,8 @@ from colony import Colony
 from solution import Solution
 
 # TODO
+# - Run cProfile
 # - Use Cython for speedup
-# - Update format of solution in ant
-# - Update actual capacity
-# - Check for capacity explosion
-# - Sort by demand
-
-# DONE
-# - Clean World class
 
 
 def main(args):
