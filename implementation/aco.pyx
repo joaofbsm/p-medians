@@ -8,7 +8,6 @@ __license__ = "GPL"
 __version__ = "3.0"
 
 import gap
-import math
 import numpy as np
 from solution import Solution
 
@@ -84,7 +83,7 @@ def calculate_probabilities(world, possible_nodes, ni, alpha, beta):
         alpha -- Pheromone exponent in probability calculation.
         beta -- Information Heuristic exponent in probability calculation.
     """
-    
+
     n = world.n  # Number of nodes
     pheromones = np.array([node.pheromone for node in world.nodes])
 
@@ -108,7 +107,7 @@ def evaluate_solutions(world, colony):
         colony -- Colony of ants.
     """
 
-    best = Solution(distance=math.inf)
+    best = Solution(distance=np.inf)
     worst = Solution(distance=0)
 
     for ant in colony.ants:

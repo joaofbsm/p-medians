@@ -13,7 +13,6 @@ __license__ = "GPL"
 __version__ = "3.0"
 
 import aco
-import math
 import utils
 import argparse
 import numpy as np
@@ -57,7 +56,7 @@ def main(args):
         np.random.seed(random_seeds[repetition])
 
         # Reset things for new repetition
-        g_best = Solution(distance=math.inf)
+        g_best = Solution(distance=np.inf)
         world.reset_pheromones(initial_pheromone)
 
         print("Repetition {}\n".format(repetition))
