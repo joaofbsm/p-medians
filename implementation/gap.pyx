@@ -28,20 +28,22 @@ def GAP(world, ant):
     association = np.zeros((n, n))  # Associates nodes with medians
 
     # Sort clients decrescently by their demand
-    ordered_clients = sort_clients(world, clients)
+    ordered_clients = sorted(clients, key=lambda i: world.nodes[i].demand, 
+                             reverse=True)
     for client in ordered_clients:
         # Sort centers by their distance to client
-        ordered_centers = sort_centers(world, client[0], centers)
+        ordered_centers = sorted(centers, 
+                                 key=lambda m: world.distances[client][m])
 
         # Attribute client to a center
         for center in ordered_centers:
-            capacity = world.nodes[center[0]].actual_capacity
+            capacity = world.nodes[center].actual_capacity
 
             # Attribute it to the first center with available capacity
-            if capacity - world.nodes[client[0]].demand >= 0:
-                capacity -= world.nodes[client[0]].demand
-                world.nodes[center[0]].actual_capacity = capacity
-                association[client[0]][center[0]] = 1
+            if capacity - world.nodes[client].demand >= 0:
+                capacity -= world.nodes[client].demand
+                world.nodes[center].actual_capacity = capacity
+                association[client][center] = 1
                 break 
 
     # Reset nodes capacity
@@ -49,36 +51,3 @@ def GAP(world, ant):
         world.nodes[center].actual_capacity = world.nodes[center].capacity
 
     return association
-
-
-def sort_clients(world, clients):
-    """Sort clients by their demand.
-    
-    Arguments:
-        world -- World structural representation.
-        clients -- List of client nodes.
-    """
-
-    sorted_clients = []
-
-    for client in clients:
-        sorted_clients.append((client, world.nodes[client].demand))
-    
-    return sorted(sorted_clients, key=lambda x: x[1], reverse=True)
-
-
-def sort_centers(world, client, centers):
-    """Sort centers by their distance to client.
-    
-    Arguments:
-        world -- World structural representation.
-        clients -- List of client nodes.
-        centers -- List of center(median) nodes.
-    """
-    
-    sorted_centers = []
-    for center in centers:
-        sorted_centers.append((center, world.distances[client][center]))
-
-
-    return sorted(sorted_centers, key=lambda x: x[1])
