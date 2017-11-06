@@ -11,10 +11,16 @@ n_repetitions = 30
 
 datasets = [("SJC1", 100, 10), ("SJC2", 200, 15), ("SJC3b", 300, 30)]
 
-n_iterations = [25, 50, 100]
-rho = 0.9
+#dataset_name, n, p = datasets[1]
+
+n_iterations = 25
+#n_iterations = [25, 50, 100]
+#rho = 0.9
+rhos = [0.0, 0.1, 0.5, 0.9]
 alpha = 0.5
+#alphas = [0.5, 1, 0, 3]
 beta = 0.5
+#betas = [0.5, 0, 1, 1]
 
 for dataset_name, n, p in datasets:
   fig, ax = plt.subplots()
@@ -22,18 +28,19 @@ for dataset_name, n, p in datasets:
   ax.set_ylabel("Total Distance")
 
   n_ants = n - p
+  #n_ants = [p, n - p, 2 * (n - p)]
 
-  for iterations in n_iterations:
+  for rho in rhos:
       avg = []
       std_dev = []
 
-      g_best = np.zeros((iterations, 1))
-      l_best = np.zeros((iterations, 1))
-      l_worst = np.zeros((iterations, 1))
+      g_best = np.zeros((n_iterations, 1))
+      l_best = np.zeros((n_iterations, 1))
+      l_worst = np.zeros((n_iterations, 1))
       for repetition in range(n_repetitions):
           file_path = "../results/{}it{}rho{}alpha{}beta{}ants{}/{}.csv".format(
                                                                     dataset_name, 
-                                                                    iterations,
+                                                                    n_iterations,
                                                                     rho,
                                                                     alpha,
                                                                     beta,
@@ -41,9 +48,9 @@ for dataset_name, n, p in datasets:
                                                                     repetition)
 
           content = np.genfromtxt(file_path,  dtype = "float", delimiter = ",")
-          g_best = np.hstack((g_best, content[:, 1].reshape((iterations, 1))))
-          l_best = np.hstack((g_best, content[:, 2].reshape((iterations, 1))))
-          l_worst = np.hstack((g_best, content[:, 3].reshape((iterations, 1))))
+          g_best = np.hstack((g_best, content[:, 1].reshape((n_iterations, 1))))
+          l_best = np.hstack((g_best, content[:, 2].reshape((n_iterations, 1))))
+          l_worst = np.hstack((g_best, content[:, 3].reshape((n_iterations, 1))))
 
       g_best = g_best[:, 1:]
       l_best = l_best[:, 1:]
@@ -57,19 +64,17 @@ for dataset_name, n, p in datasets:
       std_dev.append(np.std(l_best, axis=1))
       std_dev.append(np.std(l_worst, axis=1))
 
-      label = "{} iterations - global".format(iterations)
-      ax.plot(np.arange(iterations), avg[0], label=label)
-      ax.fill_between(np.arange(iterations), avg[0] - std_dev[0], avg[0] + std_dev[0], alpha=0.2)
+      label = "rho {} - global".format(rho)
+      ax.plot(np.arange(n_iterations), avg[0], label=label)
+      ax.fill_between(np.arange(n_iterations), avg[0] - std_dev[0], avg[0] + std_dev[0], alpha=0.2)
 
-      """
-      label = "{} iterations - local".format(iterations)
-      ax.plot(np.arange(iterations), avg[1], label=label)
-      ax.fill_between(np.arange(iterations), avg[1] - std_dev[1], avg[1] + std_dev[1], alpha=0.2)
+      label = "rho {} - local".format(rho)
+      ax.plot(np.arange(n_iterations), avg[1], label=label)
+      ax.fill_between(np.arange(n_iterations), avg[1] - std_dev[1], avg[1] + std_dev[1], alpha=0.2)
 
       legend = ax.legend(loc='upper right')
-      """
 
   #plt.show(block=False)
   #input("Hit Enter To Close")
   #plt.close()
-  plt.savefig("{}/{}_iterations.png".format(dataset_name, dataset_name), dpi=200, bbox_inches="tight")
+  plt.savefig("{}/{}_rho.png".format(dataset_name, dataset_name), dpi=200, bbox_inches="tight")
