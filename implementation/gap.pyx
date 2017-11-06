@@ -78,8 +78,7 @@ def sort_centers(world, client, centers):
     
     sorted_centers = []
     for center in centers:
-        sorted_centers.append((center, 
-                               utils.euclidean_distance(world.nodes[client], 
-                                                        world.nodes[center])))
+        sorted_centers.append((center, world.distances[client][center]))
+
 
     return sorted(sorted_centers, key=lambda x: x[1])
